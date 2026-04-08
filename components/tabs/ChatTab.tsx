@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { useChatStore, Message } from '@/hooks/use-chat-store';
 
@@ -27,7 +26,7 @@ export default function ChatTab() {
           </motion.div>
         </div>
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">민재와 대화해보세요</h1>
+          <h1 className="text-2xl font-bold tracking-tight">성구와 대화해보세요</h1>
           <p className="text-neutral-500 max-w-xs mx-auto text-sm leading-relaxed">
             프로젝트, 기술 스택, 또는 협업에 대해 궁금한 점이 있다면 무엇이든 물어보세요!
           </p>
@@ -49,15 +48,14 @@ export default function ChatTab() {
             <div className={`flex gap-3 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
               {msg.role === 'assistant' && (
                 <div className="w-8 h-8 rounded-full overflow-hidden border border-neutral-200 shrink-0 bg-apple-blue flex items-center justify-center text-[10px] text-white font-bold">
-                  <Image
-                    src="/avatar.png"
+                  <img
+                    src="/avatar.svg"
                     alt="AI"
                     width={32}
                     height={32}
                     className="object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
-                  <span className="absolute">K</span>
+                  <span className="absolute">성</span>
                 </div>
               )}
               <div className={`px-4 py-2.5 rounded-[1.5rem] text-sm leading-relaxed shadow-[0_4px_16px_rgba(0,0,0,0.02)] ${
@@ -80,15 +78,14 @@ export default function ChatTab() {
         >
           <div className="flex gap-3 items-center">
             <div className="w-8 h-8 rounded-full border border-neutral-200 bg-apple-blue flex items-center justify-center text-[10px] text-white font-bold overflow-hidden">
-               <Image
-                src="/avatar.png"
+              <img
+                src="/avatar.svg"
                 alt="AI"
                 width={32}
                 height={32}
                 className="object-cover"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
-              <span className="absolute">K</span>
+              <span className="absolute">성</span>
             </div>
             <div className="bg-white/60 backdrop-blur-xl border border-white/60 px-4 py-3 rounded-[1.5rem] rounded-tl-none flex gap-1 shadow-[0_4px_16px_rgba(0,0,0,0.02)]">
               <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0 }} className="w-1.5 h-1.5 bg-neutral-400 rounded-full" />

@@ -1,33 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-
-const EXPERIENCES = [
-  {
-    company: '독립 개발자 / 인디 해커',
-    role: 'Founder & Full-stack Developer',
-    period: '2024.01 - 현재',
-    description: 'Micro SaaS 프로덕트를 기획부터 개발, 운영까지 전담하며, 개발 경험을 바탕으로 도서를 집필하고 콘텐츠를 제작합니다.',
-    details: [
-      '프로덕트로그(ProductLog), 인디로그(IndieLog) 등 다수의 Micro SaaS 기획 및 풀스택 개발',
-      'Next.js, Convex, Clerk 등 모던 웹 기술 스택을 활용한 빠른 프로토타이핑 및 서비스 런칭',
-      '길벗 출판사 IT 전문서적 2권 집필 ("커서×AI로 완성하는 나만의 웹 서비스", "제미나이로 일 잘하는 법")',
-      'AI 도구를 활용한 개발 생산성 향상 방법론 연구 및 커뮤니티 공유'
-    ]
-  },
-  {
-    company: '(주) 휴머닉스',
-    role: 'Frontend Developer',
-    period: '2024.08 - 2025.11',
-    description: '헬스케어 스타트업 소프트웨어팀에서 프론트엔드 개발을 담당하며, 사용자 친화적인 웹 서비스를 구축했습니다.',
-    details: [
-      '의료 데이터 시각화 대시보드 프론트엔드 아키텍처 설계 및 개발',
-      'React, TypeScript 기반의 재사용 가능한 UI 컴포넌트 시스템 구축',
-      'RESTful API 연동 및 전역 상태 관리를 통한 클라이언트 성능 최적화',
-      '기획 및 디자인 팀과의 긴밀한 협업을 통한 애자일 개발 프로세스 참여'
-    ]
-  }
-];
+import { PORTFOLIO } from '@/lib/portfolio';
 
 export default function ExperienceTab() {
   return (
@@ -35,7 +9,7 @@ export default function ExperienceTab() {
       <h1 className="text-4xl font-bold tracking-tight text-neutral-900">경험</h1>
 
       <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-neutral-200 before:to-transparent">
-        {EXPERIENCES.map((exp, index) => (
+        {PORTFOLIO.experiences.map((exp, index) => (
           <motion.div 
             key={index}
             initial={{ opacity: 0, y: 20 }}

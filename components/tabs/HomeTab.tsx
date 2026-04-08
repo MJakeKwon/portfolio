@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { motion } from 'motion/react';
 import { TabType } from '@/app/page';
+import { PORTFOLIO } from '@/lib/portfolio';
 
 interface HomeTabProps {
   onNavigate: (tab: TabType) => void;
@@ -33,23 +33,19 @@ export default function HomeTab({ onNavigate }: HomeTabProps) {
         className="relative z-10"
       >
         <div className="relative w-40 h-40 md:w-56 md:h-56 rounded-[2.5rem] overflow-hidden border-4 border-white shadow-2xl mb-8 group">
-          <Image
-            src="/avatar.png"
+          <img
+            src="/avatar.svg"
             alt="Profile Avatar"
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-apple-blue flex items-center justify-center text-white text-6xl font-bold">
-            K
+          <div className="absolute inset-0 bg-apple-blue/20 flex items-center justify-center text-white text-6xl font-bold">
+            성
           </div>
         </div>
 
         <div className="space-y-3">
-          <h2 className="text-lg md:text-xl font-medium text-neutral-500">안녕하세요, 권민재입니다.</h2>
+          <h2 className="text-lg md:text-xl font-medium text-neutral-500">안녕하세요, {PORTFOLIO.profile.name}입니다.</h2>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 leading-tight">
             운영 환경을 고려하여<br className="hidden md:block" /> 설계하고 개발합니다.
           </h1>

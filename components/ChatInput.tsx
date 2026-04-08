@@ -61,7 +61,7 @@ export default function ChatInput({ activeTab, onNavigate }: ChatInputProps) {
     if (error === 'QUOTA_EXCEEDED') return "오늘 API 사용량을 초과했어요. 내일 다시 시도해주세요!";
     if (error === 'AUTH_ERROR') return "API 설정을 확인해주세요.";
     if (error === 'SERVER_ERROR') return "일시적인 문제가 발생했어요. 잠시 후 다시 시도해주세요.";
-    return "민재에게 물어보세요...";
+    return "성구에게 물어보세요...";
   };
 
   return (
@@ -73,13 +73,13 @@ export default function ChatInput({ activeTab, onNavigate }: ChatInputProps) {
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          disabled={isLoading || !!countdown || !!error}
+          disabled={isLoading || !!countdown}
           placeholder={getPlaceholder()}
           className="flex-1 bg-transparent border-none outline-none text-sm py-1 placeholder:text-neutral-400 disabled:cursor-not-allowed"
         />
         <button
           type="submit"
-          disabled={!value.trim() || isLoading || !!countdown || !!error}
+          disabled={!value.trim() || isLoading || !!countdown}
           className="bg-apple-blue text-white p-1.5 rounded-full disabled:opacity-30 disabled:grayscale transition-all active:scale-90"
         >
           <ArrowUp size={18} strokeWidth={3} />

@@ -42,7 +42,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     try {
       const chatHistory = [...messages, { role: 'user', content }];
-      const response = await fetch('/app/api/chat', {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: chatHistory }),

@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'motion/react';
+import { PORTFOLIO } from '@/lib/portfolio';
 
 export default function AboutTab() {
-  const keywords = ['1인 기업', '인디해커', 'Micro SaaS', 'AI', '크리에이터', '저자'];
+  const keywords = PORTFOLIO.profile.keywords;
 
   return (
     <div className="py-10 space-y-12">
@@ -17,11 +18,10 @@ export default function AboutTab() {
         </motion.h1>
         <div className="space-y-4">
           <p className="text-xl text-neutral-800 leading-relaxed font-medium">
-            대기업과 스타트업을 거쳐, 현재는 독립적으로 프로덕트를 개발하고 있습니다.
+            {PORTFOLIO.profile.intro[0]}
           </p>
           <p className="text-lg text-neutral-600 leading-relaxed">
-            AI 도구를 적극적으로 활용하여 아이디어를 신속하게 구현하는 과정에 깊은 흥미를 느낍니다. 
-            이러한 개발 여정과 인사이트를 글과 영상으로 꾸준히 기록하며 커뮤니티와 공유하고 있습니다.
+            {PORTFOLIO.profile.intro[1]}
           </p>
         </div>
       </section>
@@ -46,8 +46,7 @@ export default function AboutTab() {
       <section className="p-8 bg-white/60 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] shadow-[0_8px_32px_rgba(0,0,0,0.04)] space-y-4">
         <h2 className="text-xl font-bold text-neutral-900">나의 철학</h2>
         <p className="text-neutral-600 leading-relaxed">
-          단순히 코드를 작성하는 것을 넘어, 실제 운영 환경에서의 안정성과 사용자에게 전달되는 가치를 최우선으로 고려합니다. 
-          효율적인 아키텍처 설계와 지속 가능한 개발 문화를 구축하는 것을 지향합니다.
+          {PORTFOLIO.profile.philosophy}
         </p>
       </section>
     </div>

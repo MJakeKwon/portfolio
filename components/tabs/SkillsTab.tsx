@@ -1,44 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-
-const SKILL_GROUPS = [
-  {
-    name: 'Frontend',
-    skills: [
-      { name: 'React', slug: 'react' },
-      { name: 'Next.js', slug: 'nextdotjs' },
-      { name: 'TypeScript', slug: 'typescript' },
-      { name: 'Tailwind CSS', slug: 'tailwindcss' },
-      { name: 'Shadcn', slug: 'shadcnui' },
-    ],
-  },
-  {
-    name: 'Backend & Infrastructure',
-    skills: [
-      { name: 'Convex', slug: 'convex' },
-      { name: 'Clerk', slug: 'clerk' },
-      { name: 'Vercel', slug: 'vercel' },
-      { name: 'Turborepo', slug: 'turborepo' },
-    ],
-  },
-  {
-    name: 'AI Tools',
-    skills: [
-      { name: 'Cursor', slug: 'cursor' },
-      { name: 'Claude Code', slug: 'anthropic' },
-      { name: 'Google AI Studio', slug: 'google' },
-      { name: 'Gemini API', slug: 'googlegemini' },
-    ],
-  },
-  {
-    name: 'Planning & Design',
-    skills: [
-      { name: 'Notion', slug: 'notion' },
-      { name: 'Figma', slug: 'figma' },
-    ],
-  },
-];
+import { PORTFOLIO } from '@/lib/portfolio';
 
 export default function SkillsTab() {
   return (
@@ -46,7 +9,7 @@ export default function SkillsTab() {
       <h1 className="text-4xl font-bold tracking-tight text-neutral-900">기술 스택</h1>
 
       <div className="space-y-10">
-        {SKILL_GROUPS.map((group) => (
+        {PORTFOLIO.skills.map((group) => (
           <section key={group.name} className="space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-widest text-neutral-400">
               {group.name}

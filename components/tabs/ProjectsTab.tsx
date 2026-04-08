@@ -2,43 +2,7 @@
 
 import Image from 'next/image';
 import { ExternalLink } from 'lucide-react';
-
-const PROJECTS = [
-  {
-    category: 'Micro SaaS',
-    title: '프로덕트로그',
-    description: '1인 개발자를 위한 피드백 및 프로덕트 관리 플랫폼입니다.',
-    tags: ['Next.js', 'Convex', 'Clerk', 'Shadcn', 'Tailwind CSS'],
-    image: 'https://picsum.photos/seed/productlog/800/600',
-    link: 'https://productlog.xyz',
-  },
-  {
-    category: 'Micro SaaS',
-    title: '인디로그',
-    description: '1인 기업가를 위한 프로필 사이트 구축 플랫폼입니다.',
-    tags: ['Next.js', 'Convex', 'Clerk', 'Shadcn', 'Tailwind CSS'],
-    image: 'https://picsum.photos/seed/indielog/800/600',
-    link: 'https://indielog.xyz',
-  },
-  {
-    category: '도서 집필',
-    title: '커서×AI로 완성하는 나만의 웹 서비스',
-    description: 'AI 코딩 도구 Cursor를 활용한 실전 웹 서비스 개발 가이드입니다.',
-    tags: ['AI', 'Cursor', 'Guide', 'Book'],
-    image: 'https://picsum.photos/seed/cursorbook/800/600',
-    link: 'https://product.kyobobook.co.kr/detail/S000218729929',
-    publisher: '길벗',
-  },
-  {
-    category: '도서 집필',
-    title: '제미나이로 일 잘하는 법',
-    description: '구글 제미나이(Gemini)를 활용한 실무 업무 효율화 가이드입니다.',
-    tags: ['AI', 'Gemini', 'Guide', 'Book'],
-    image: 'https://picsum.photos/seed/geminibook/800/600',
-    link: 'https://product.kyobobook.co.kr/detail/S000219506535',
-    publisher: '길벗',
-  },
-];
+import { PORTFOLIO } from '@/lib/portfolio';
 
 export default function ProjectsTab() {
   return (
@@ -46,7 +10,7 @@ export default function ProjectsTab() {
       <h1 className="text-4xl font-bold tracking-tight text-neutral-900">프로젝트</h1>
       
       <div className="grid grid-cols-1 gap-12">
-        {PROJECTS.map((project, index) => (
+        {PORTFOLIO.projects.map((project, index) => (
           <div key={index} className="group flex flex-col gap-6 p-4 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[3rem] shadow-[0_8px_32px_rgba(0,0,0,0.04)] transition-all duration-300 hover:bg-white/60 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)]">
             <div className="relative aspect-[16/10] rounded-[2.5rem] overflow-hidden bg-neutral-100">
               <Image
@@ -63,7 +27,7 @@ export default function ProjectsTab() {
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-apple-blue uppercase tracking-wider">{project.category}</span>
-                  {project.publisher && (
+                  {'publisher' in project && project.publisher && (
                     <span className="text-xs font-medium text-neutral-400">· {project.publisher}</span>
                   )}
                 </div>

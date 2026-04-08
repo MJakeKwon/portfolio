@@ -1,25 +1,26 @@
 'use client';
 
 import { Mail, Github, ArrowRight } from 'lucide-react';
-
-const CONTACTS = [
-  { 
-    name: 'Email', 
-    value: 'james970506@gmail.com', 
-    icon: Mail, 
-    link: 'mailto:james970506@gmail.com',
-    color: 'bg-blue-50 text-blue-600'
-  },
-  { 
-    name: 'GitHub', 
-    value: 'github.com/MJakeKwon', 
-    icon: Github, 
-    link: 'https://github.com/MJakeKwon',
-    color: 'bg-neutral-900 text-white'
-  },
-];
+import { PORTFOLIO } from '@/lib/portfolio';
 
 export default function ContactTab() {
+  const CONTACTS = [
+    {
+      name: 'Email',
+      value: PORTFOLIO.contacts[0].value,
+      icon: Mail,
+      link: PORTFOLIO.contacts[0].link,
+      color: 'bg-blue-50 text-blue-600',
+    },
+    {
+      name: 'GitHub',
+      value: PORTFOLIO.contacts[1].value,
+      icon: Github,
+      link: PORTFOLIO.contacts[1].link,
+      color: 'bg-neutral-900 text-white',
+    },
+  ] as const;
+
   return (
     <div className="py-10 space-y-12">
       <div className="space-y-4">
