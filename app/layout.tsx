@@ -8,12 +8,28 @@ const inter = Inter({
   variable: '--font-sans',
 });
 
-const siteUrl =
-  process.env.SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+function toAbsoluteUrl(input: string | undefined) {
+  const raw = (input ?? '').trim();
+  if (!raw) return undefined;
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+  return `https://${raw}`;
+}
+
+function getMetadataBase() {
+  const candidate =
+    toAbsoluteUrl(process.env.SITE_URL) ||
+    toAbsoluteUrl(process.env.VERCEL_URL) ||
+    'http://localhost:3000';
+
+  try {
+    return new URL(candidate);
+  } catch {
+    return new URL('http://localhost:3000');
+  }
+}
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: getMetadataBase(),
   title: '성구 포트폴리오',
   description: '운영 환경을 고려해 설계하고 개발하는 성구의 포트폴리오입니다.',
   openGraph: {
