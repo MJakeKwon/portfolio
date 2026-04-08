@@ -1,62 +1,88 @@
 'use client';
 
-import Image from 'next/image';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, LockKeyhole } from 'lucide-react';
 import { PORTFOLIO } from '@/lib/portfolio';
 
 export default function ProjectsTab() {
   return (
-    <div className="py-10 space-y-12">
-      <h1 className="text-4xl font-bold tracking-tight text-neutral-900">프로젝트</h1>
-      
-      <div className="grid grid-cols-1 gap-12">
-        {PORTFOLIO.projects.map((project, index) => (
-          <div key={index} className="group flex flex-col gap-6 p-4 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[3rem] shadow-[0_8px_32px_rgba(0,0,0,0.04)] transition-all duration-300 hover:bg-white/60 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)]">
-            <div className="relative aspect-[16/10] rounded-[2.5rem] overflow-hidden bg-neutral-100">
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-            </div>
-            
-            <div className="px-4 pb-4 space-y-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-apple-blue uppercase tracking-wider">{project.category}</span>
-                  {'publisher' in project && project.publisher && (
-                    <span className="text-xs font-medium text-neutral-400">· {project.publisher}</span>
-                  )}
+    <div className="space-y-12 py-10">
+      <div className="space-y-4">
+        <h1 className="text-4xl font-bold tracking-tight text-neutral-900">프로젝트</h1>
+        <p className="text-lg leading-7 text-neutral-600">무엇을 만들었는지보다 어떤 문제를 해결했는지가 먼저 보이도록 정리했습니다.</p>
+      </div>
+
+      <div className="space-y-8">
+        {PORTFOLIO.projects.map((project) => (
+          <section
+            key={project.title}
+            className={`overflow-hidden rounded-[2.8rem] border border-white/70 bg-gradient-to-br ${project.accent} shadow-[0_20px_70px_rgba(15,23,42,0.08)] backdrop-blur-2xl`}
+          >
+            <div className="border-b border-white/60 bg-white/68 p-8">
+              <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                <div className="space-y-3">
+                  <div className="text-xs font-semibold uppercase tracking-[0.24em] text-neutral-400">{project.category}</div>
+                  <h2 className="text-3xl font-semibold tracking-tight text-neutral-900">{project.title}</h2>
+                  <p className="text-sm font-medium text-sky-700">{project.problem}</p>
+                  <p className="max-w-3xl text-base leading-7 text-neutral-600">{project.summary}</p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-neutral-900">{project.title}</h2>
-                  <a 
-                    href={project.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/50 hover:bg-white transition-colors text-neutral-400 hover:text-apple-blue shadow-sm"
-                  >
-                    <ExternalLink size={20} />
-                  </a>
-                </div>
-              </div>
-              
-              <p className="text-neutral-600 leading-relaxed">
-                {project.description}
-              </p>
-              
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map(tag => (
-                  <span key={tag} className="text-[11px] font-semibold bg-white/80 border border-white text-neutral-500 px-3 py-1 rounded-full shadow-sm">
-                    {tag}
-                  </span>
-                ))}
+
+                {project.links?.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {project.links.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02]"
+                      >
+                        {link.label}
+                        <ExternalLink size={15} />
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/80 px-4 py-2 text-sm font-medium text-neutral-600">
+                    <LockKeyhole size={15} />
+                    {project.linkNote}
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+
+            <div className="grid gap-0 md:grid-cols-[1.05fr_0.95fr]">
+              <div className="bg-white/52 p-8">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">핵심 작업</div>
+                <ul className="mt-5 space-y-3">
+                  {project.contributions.map((item) => (
+                    <li key={item} className="flex gap-3 text-sm leading-6 text-neutral-700">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-white/64 p-8">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">성과와 결과</div>
+                <div className="mt-5 space-y-3">
+                  {project.outcomes.map((outcome) => (
+                    <div key={outcome} className="rounded-[1.5rem] border border-white/70 bg-white/80 px-4 py-4 text-sm font-medium leading-6 text-neutral-700">
+                      {outcome}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {project.tags.map((tag) => (
+                    <span key={tag} className="rounded-full border border-white/70 bg-white/80 px-3 py-1.5 text-xs font-semibold text-neutral-600">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
         ))}
       </div>
     </div>

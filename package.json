@@ -1,5 +1,6 @@
 {
-  "name": "ai-studio-applet",
+  "name": "kwonminjae-portfolio",
+  "description": "구조와 운영까지 같이 보는 백엔드 개발자 권민재의 포트폴리오",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -10,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "clean": "next clean"
+    "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\""
   },
   "dependencies": {
     "@google/genai": "^1.17.0",

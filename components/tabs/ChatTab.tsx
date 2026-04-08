@@ -1,101 +1,153 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { useChatStore, Message } from '@/hooks/use-chat-store';
+import { Fragment, ReactNode, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
+import { MessageCircleMore } from 'lucide-react';
+import { PORTFOLIO } from '@/lib/portfolio';
+import { useChatStore } from '@/hooks/use-chat-store';
+
+function renderInline(text: string) {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+      return (
+        <strong key={`${part}-${index}`} className="font-semibold text-neutral-900">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    return <Fragment key={`${part}-${index}`}>{part}</Fragment>;
+  });
+}
+
+function normalizeMessage(text: string) {
+  return text
+    .replace(/\r\n/g, '\n')
+    .replace(/\s+\*\s+(?=\*\*|[^\s])/g, '\n* ')
+    .replace(/\s+-\s+(?=[^\s])/g, '\n- ')
+    .trim();
+}
+
+function renderMessageContent(content: string) {
+  const normalized = normalizeMessage(content);
+  const lines = normalized.split('\n').filter((line) => line.trim().length > 0);
+  const blocks: ReactNode[] = [];
+  let bulletBuffer: string[] = [];
+
+  const flushBullets = () => {
+    if (bulletBuffer.length === 0) {
+      return;
+    }
+
+    blocks.push(
+      <ul key={`list-${blocks.length}`} className="list-disc space-y-2 pl-5">
+        {bulletBuffer.map((item, index) => (
+          <li key={`${item}-${index}`} className="leading-7">
+            {renderInline(item)}
+          </li>
+        ))}
+      </ul>,
+    );
+
+    bulletBuffer = [];
+  };
+
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+    const bulletMatch = trimmed.match(/^[-*]\s+(.*)$/);
+
+    if (bulletMatch) {
+      bulletBuffer.push(bulletMatch[1] ?? '');
+      return;
+    }
+
+    flushBullets();
+    blocks.push(
+      <p key={`paragraph-${blocks.length}`} className="whitespace-pre-wrap leading-7">
+        {renderInline(trimmed)}
+      </p>,
+    );
+  });
+
+  flushBullets();
+
+  if (blocks.length === 0) {
+    return <p className="whitespace-pre-wrap leading-7">{content}</p>;
+  }
+
+  return <div className="space-y-3">{blocks}</div>;
+}
 
 export default function ChatTab() {
   const { messages, isLoading } = useChatStore();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const endNode = endRef.current;
+    const containerNode = containerRef.current;
+
+    if (!endNode || !containerNode) {
+      return;
     }
-  }, [messages, isLoading]);
+
+    endNode.scrollIntoView({ behavior: messages.length > 1 ? 'smooth' : 'auto', block: 'end' });
+  }, [isLoading, messages]);
 
   if (messages.length === 0) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
-        <div className="w-20 h-20 rounded-[2rem] bg-apple-blue/10 flex items-center justify-center text-apple-blue">
-          <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 21 1.9-1.9a9 9 0 1 1 3.4 3.4L3 21Z"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 16h.01"/></svg>
-          </motion.div>
+      <div className="min-h-[60vh] space-y-6 py-10 text-center">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[2rem] bg-sky-100 text-sky-600">
+          <MessageCircleMore size={36} />
         </div>
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">성구와 대화해보세요</h1>
-          <p className="text-neutral-500 max-w-xs mx-auto text-sm leading-relaxed">
-            프로젝트, 기술 스택, 또는 협업에 대해 궁금한 점이 있다면 무엇이든 물어보세요!
-          </p>
+        <div className="space-y-3">
+          <h1 className="text-3xl font-semibold tracking-tight text-neutral-900">{PORTFOLIO.chat.title}</h1>
+          <p className="mx-auto max-w-md text-sm leading-6 text-neutral-500">{PORTFOLIO.chat.description}</p>
+        </div>
+
+        <div className="mx-auto grid max-w-xl gap-3 text-left">
+          {PORTFOLIO.chat.suggestions.map((question) => (
+            <div key={question} className="rounded-[1.5rem] border border-white/70 bg-white/72 px-4 py-4 text-sm leading-6 text-neutral-700 shadow-[0_14px_40px_rgba(15,23,42,0.06)]">
+              {question}
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="py-10 flex flex-col gap-6">
-      <AnimatePresence initial={false}>
-        {messages.map((msg) => (
-          <motion.div
-            key={msg.id}
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={`flex gap-3 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-              {msg.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full overflow-hidden border border-neutral-200 shrink-0 bg-apple-blue flex items-center justify-center text-[10px] text-white font-bold">
-                  <img
-                    src="/avatar.svg"
-                    alt="AI"
-                    width={32}
-                    height={32}
-                    className="object-cover"
-                  />
-                  <span className="absolute">성</span>
-                </div>
-              )}
-              <div className={`px-4 py-2.5 rounded-[1.5rem] text-sm leading-relaxed shadow-[0_4px_16px_rgba(0,0,0,0.02)] ${
-                msg.role === 'user' 
-                  ? 'bg-apple-blue text-white rounded-tr-none' 
-                  : 'bg-white/60 backdrop-blur-xl border border-white/60 text-neutral-800 rounded-tl-none'
-              }`}>
-                {msg.content}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-
-      {isLoading && (
+    <div ref={containerRef} className="space-y-4 py-10">
+      {messages.map((message) => (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex justify-start"
+          key={message.id}
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
         >
-          <div className="flex gap-3 items-center">
-            <div className="w-8 h-8 rounded-full border border-neutral-200 bg-apple-blue flex items-center justify-center text-[10px] text-white font-bold overflow-hidden">
-              <img
-                src="/avatar.svg"
-                alt="AI"
-                width={32}
-                height={32}
-                className="object-cover"
-              />
-              <span className="absolute">성</span>
-            </div>
-            <div className="bg-white/60 backdrop-blur-xl border border-white/60 px-4 py-3 rounded-[1.5rem] rounded-tl-none flex gap-1 shadow-[0_4px_16px_rgba(0,0,0,0.02)]">
-              <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0 }} className="w-1.5 h-1.5 bg-neutral-400 rounded-full" />
-              <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-neutral-400 rounded-full" />
-              <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-neutral-400 rounded-full" />
-            </div>
+          <div
+            className={`max-w-[88%] rounded-[1.8rem] px-5 py-4 text-sm shadow-[0_14px_40px_rgba(15,23,42,0.06)] ${
+              message.role === 'user'
+                ? 'rounded-br-md bg-neutral-900 text-white'
+                : 'rounded-bl-md border border-white/70 bg-white/72 text-neutral-700 backdrop-blur-2xl'
+            }`}
+          >
+            {message.role === 'assistant' ? renderMessageContent(message.content) : <p className="whitespace-pre-wrap leading-7">{message.content}</p>}
           </div>
         </motion.div>
-      )}
-      <div ref={scrollRef} />
+      ))}
+
+      {isLoading ? (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
+          <div className="rounded-[1.8rem] rounded-bl-md border border-white/70 bg-white/72 px-5 py-4 text-sm text-neutral-500 shadow-[0_14px_40px_rgba(15,23,42,0.06)] backdrop-blur-2xl">
+            포트폴리오 범위 안에서 답변을 정리하고 있습니다...
+          </div>
+        </motion.div>
+      ) : null}
+
+      <div ref={endRef} />
     </div>
   );
 }

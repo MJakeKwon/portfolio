@@ -1,9 +1,10 @@
 'use client';
 
-import { ArrowUp } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useChatStore } from '@/hooks/use-chat-store';
+import { ArrowUp, Sparkles } from 'lucide-react';
+import { FormEvent, useEffect, useState } from 'react';
 import { TabType } from '@/app/page';
+import { PORTFOLIO } from '@/lib/portfolio';
+import { useChatStore } from '@/hooks/use-chat-store';
 
 interface ChatInputProps {
   activeTab?: TabType;
@@ -12,87 +13,116 @@ interface ChatInputProps {
 
 export default function ChatInput({ activeTab, onNavigate }: ChatInputProps) {
   const [value, setValue] = useState('');
-  const { sendMessage, isLoading, error, waitTime, clearError } = useChatStore();
   const [countdown, setCountdown] = useState<number | null>(null);
+  const { sendMessage, isLoading, error, waitTime, clearError } = useChatStore();
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (waitTime) {
-      // Start interval immediately without setting state synchronously
-      timer = setInterval(() => {
-        setCountdown((prev) => {
-          const current = prev ?? waitTime;
-          if (current > 1) return current - 1;
-          clearInterval(timer);
-          return null;
-        });
-      }, 1000);
-      
-      // Set initial value in a microtask to avoid synchronous setState warning
-      Promise.resolve().then(() => setCountdown(waitTime));
+    let resetTimer: number | undefined;
+
+    if (!waitTime) {
+      resetTimer = window.setTimeout(() => setCountdown(null), 0);
+      return () => {
+        if (resetTimer) {
+          window.clearTimeout(resetTimer);
+        }
+      };
     }
+
+    resetTimer = window.setTimeout(() => setCountdown(waitTime), 0);
+
+    const intervalId = window.setInterval(() => {
+      setCountdown((current) => {
+        if (!current || current <= 1) {
+          window.clearInterval(intervalId);
+          return null;
+        }
+
+        return current - 1;
+      });
+    }, 1000);
+
     return () => {
-      if (timer) clearInterval(timer);
+      window.clearInterval(intervalId);
+      if (resetTimer) {
+        window.clearTimeout(resetTimer);
+      }
     };
   }, [waitTime]);
 
   useEffect(() => {
-    if (countdown === null && waitTime) {
+    if (countdown === null && (error === 'RATE_LIMIT_EXCEEDED' || error === 'DAILY_LIMIT_EXCEEDED')) {
       clearError();
     }
-  }, [countdown, waitTime, clearError]);
+  }, [clearError, countdown, error]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!value.trim() || isLoading || countdown) return;
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
 
-    const message = value;
+    if (!value.trim() || isLoading || countdown) {
+      return;
+    }
+
+    const message = value.trim();
     setValue('');
 
-    if (activeTab === 'home' && onNavigate) {
+    if (activeTab !== 'chat' && onNavigate) {
       onNavigate('chat');
     }
 
     await sendMessage(message);
-  };
+  }
 
-  const getPlaceholder = () => {
-    if (countdown) return `잠시 후 다시 물어봐주세요! (${countdown}초)`;
-    if (error === 'QUOTA_EXCEEDED') return "오늘 API 사용량을 초과했어요. 내일 다시 시도해주세요!";
-    if (error === 'AUTH_ERROR') return "API 설정을 확인해주세요.";
-    if (error === 'SERVER_ERROR') return "일시적인 문제가 발생했어요. 잠시 후 다시 시도해주세요.";
-    return "성구에게 물어보세요...";
-  };
+  const placeholder = (() => {
+    if (countdown) return `${countdown}초 후 다시 질문할 수 있습니다.`;
+    if (error === 'DAILY_LIMIT_EXCEEDED') return '오늘 Q&A 사용 한도에 도달했습니다. 내일 다시 시도해주세요.';
+    if (error === 'TOTAL_LIMIT_EXCEEDED') return '현재 포트폴리오 Q&A 전체 사용 한도에 도달했습니다.';
+    if (error === 'QUOTA_EXCEEDED') return '현재 AI 응답 한도에 도달했습니다. 잠시 후 다시 시도해주세요.';
+    if (error === 'AUTH_ERROR') return 'AI 설정을 확인한 뒤 다시 시도해주세요.';
+    if (error === 'SERVER_ERROR') return '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+    return '프로젝트나 경험에 대해 질문해보세요.';
+  })();
 
   return (
-    <form onSubmit={handleSubmit} className="relative group">
-      <div className={`flex items-center gap-2 bg-white/60 backdrop-blur-2xl border rounded-full px-4 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.04)] transition-all duration-300 ${
-        error ? 'border-red-200 bg-red-50/50' : 'border-white/60 focus-within:border-apple-blue/50 focus-within:bg-white/80'
-      }`}>
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          disabled={isLoading || !!countdown}
-          placeholder={getPlaceholder()}
-          className="flex-1 bg-transparent border-none outline-none text-sm py-1 placeholder:text-neutral-400 disabled:cursor-not-allowed"
-        />
-        <button
-          type="submit"
-          disabled={!value.trim() || isLoading || !!countdown}
-          className="bg-apple-blue text-white p-1.5 rounded-full disabled:opacity-30 disabled:grayscale transition-all active:scale-90"
-        >
-          <ArrowUp size={18} strokeWidth={3} />
-        </button>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 px-1 text-xs font-medium text-neutral-500">
+        <Sparkles size={14} className="text-sky-500" />
+        <span>{PORTFOLIO.chat.description}</span>
       </div>
-      {error && !countdown && (
-        <button 
-          onClick={clearError}
-          className="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] font-bold text-neutral-400 hover:text-neutral-600 uppercase tracking-widest"
+
+      <form onSubmit={handleSubmit} className="relative">
+        <div
+          className={`flex items-center gap-3 rounded-[2rem] border px-4 py-3 shadow-[0_14px_50px_rgba(15,23,42,0.08)] backdrop-blur-2xl transition-all duration-300 ${
+            error ? 'border-red-200 bg-red-50/80' : 'border-white/70 bg-white/80 focus-within:border-sky-300'
+          }`}
         >
-          Clear Error
-        </button>
-      )}
-    </form>
+          <input
+            type="text"
+            value={value}
+            onChange={(event) => setValue(event.target.value)}
+            disabled={isLoading || !!countdown}
+            placeholder={placeholder}
+            className="flex-1 bg-transparent text-sm text-neutral-700 outline-none placeholder:text-neutral-400 disabled:cursor-not-allowed"
+          />
+          <button
+            type="submit"
+            disabled={!value.trim() || isLoading || !!countdown}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-apple-blue text-white transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-30"
+            aria-label="질문 보내기"
+          >
+            <ArrowUp size={18} strokeWidth={2.6} />
+          </button>
+        </div>
+
+        {error && !countdown ? (
+          <button
+            type="button"
+            onClick={clearError}
+            className="absolute -top-8 right-2 text-[11px] font-medium text-neutral-400 transition-colors hover:text-neutral-600"
+          >
+            메시지 지우기
+          </button>
+        ) : null}
+      </form>
+    </div>
   );
 }

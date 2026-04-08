@@ -1,31 +1,39 @@
 'use client';
 
-import Image from 'next/image';
 import { PORTFOLIO } from '@/lib/portfolio';
 
 export default function SkillsTab() {
   return (
-    <div className="py-10 space-y-12">
-      <h1 className="text-4xl font-bold tracking-tight text-neutral-900">기술 스택</h1>
+    <div className="space-y-12 py-10">
+      <div className="space-y-4">
+        <h1 className="text-4xl font-bold tracking-tight text-neutral-900">기술 스택</h1>
+        <p className="text-lg leading-7 text-neutral-600">백엔드를 중심에 두고, 운영과 연동에 필요한 기술을 우선순위에 맞춰 정리했습니다.</p>
+      </div>
 
-      <div className="space-y-10">
+      <div className="space-y-8">
         {PORTFOLIO.skills.map((group) => (
-          <section key={group.name} className="space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-neutral-400">
-              {group.name}
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <section key={group.name} className="rounded-[2.5rem] border border-white/70 bg-white/72 p-8 shadow-[0_18px_60px_rgba(15,23,42,0.08)] backdrop-blur-2xl">
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">{group.name}</div>
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-900">{group.name}</h2>
+              </div>
+              <p className="max-w-xl text-sm leading-6 text-neutral-500">{group.description}</p>
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {group.skills.map((skill) => (
                 <div
                   key={skill.name}
-                  className="flex items-center gap-3 px-4 py-3 bg-white/60 backdrop-blur-xl border border-white/60 rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:bg-white/80 transition-all group cursor-default"
+                  className="flex items-center gap-3 rounded-[1.5rem] border border-white/70 bg-white/80 px-4 py-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(15,23,42,0.06)]"
                 >
-                  <div className="w-6 h-6 relative flex items-center justify-center grayscale group-hover:grayscale-0 transition-all">
-                    <img 
-                      src={`https://cdn.simpleicons.org/${skill.slug}`} 
-                      alt={skill.name}
-                      className="w-4 h-4 object-contain"
-                    />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold tracking-[0.12em] text-neutral-500">
+                    {skill.name
+                      .split(/[\s./]+/)
+                      .filter(Boolean)
+                      .slice(0, 2)
+                      .map((part) => part[0]?.toUpperCase())
+                      .join('')}
                   </div>
                   <span className="text-sm font-medium text-neutral-700">{skill.name}</span>
                 </div>
@@ -34,14 +42,6 @@ export default function SkillsTab() {
           </section>
         ))}
       </div>
-
-      <section className="p-8 bg-white/60 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] shadow-[0_8px_32px_rgba(0,0,0,0.04)] space-y-4">
-        <h2 className="text-xl font-bold text-neutral-900">학습 및 활용 전략</h2>
-        <p className="text-neutral-600 text-sm leading-relaxed">
-          단순히 기술을 익히는 것에 그치지 않고, AI 도구를 적극적으로 활용하여 개발 생산성을 극대화합니다. 
-          특히 Cursor와 Gemini API를 연동하여 복잡한 비즈니스 로직을 빠르게 구현하고 검증하는 방식을 선호합니다.
-        </p>
-      </section>
     </div>
   );
 }
